@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>brandis 관리자</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --accent:#5046e4;--accent2:#7c3aed;
+      --dark:#1d1d1f;--sub:#6e6e73;
+      --bg:#f5f5f7;--card:#ffffff;--border:#d2d2d7;
+      --new:#16a34a;--new-bg:#dcfce7;--new-border:#86efac;
+    }
+    body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+
+    /* ── LOGIN ── */
+    #loginScreen{position:fixed;inset:0;background:#07070f;display:flex;align-items:center;justify-content:center;z-index:999}
+    .login-box{background:#111118;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:48px 40px;width:360px;text-align:center}
+    .login-logo{font-size:24px;font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px}
+    .login-logo span{color:#a78bfa}
+    .login-sub{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:36px}
+    .login-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 16px;font-size:15px;font-family:'Noto Sans KR',sans-serif;color:#fff;outline:none;text-align:center;letter-spacing:.1em;transition:border-color .2s;margin-bottom:14px}
+    .login-input:focus{border-color:var(--accent)}
+    .login-input::placeholder{color:rgba(255,255,255,.2);letter-spacing:0}
+    .login-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:opacity .2s}
+    .login-btn:hover{opacity:.85}
+    .login-err{font-size:13px;color:#f87171;margin-top:10px;min-height:18px}
+    .login-hint{font-size:12px;color:rgba(255,255,255,.2);margin-top:20px}
+
+    /* ── ADMIN HEADER ── */
+    #adminScreen{display:none}
+    .admin-nav{background:#fff;border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .admin-logo{font-size:18px;font-weight:900;color:var(--dark);letter-spacing:-.02em;text-decoration:none}
+    .admin-logo span{color:var(--accent2)}
+    .admin-nav-right{display:flex;align-items:center;gap:16px}
+    .admin-badge{background:var(--new-bg);border:1px solid var(--new-border);color:var(--new);font-size:13px;font-weight:700;padding:5px 14px;border-radius:100px}
+    .admin-logout{font-size:13px;color:var(--sub);cursor:pointer;background:var(--bg);border:1px solid var(--border);padding:6px 16px;border-radius:100px;transition:background .2s}
+    .admin-logout:hover{background:var(--border)}
+    .admin-refresh{font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;background:none;border:none;padding:6px;transition:opacity .2s}
+    .admin-refresh:hover{opacity:.7}
+
+    /* ── MAIN ── */
+    .admin-main{max-width:960px;margin:0 auto;padding:40px 32px}
+    .admin-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .admin-title{font-size:26px;font-weight:900;color:var(--dark);letter-spacing:-.02em}
+    .admin-stats{display:flex;gap:16px}
+    .stat-pill{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:13px;font-weight:600;color:var(--dark)}
+    .stat-pill.new-pill{background:var(--new-bg);border-color:var(--new-border);color:var(--new)}
+
+    .filter-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+    .filter-btn{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:500;color:var(--sub);cursor:pointer;transition:all .2s}
+    .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+    .filter-btn:hover:not(.active){background:var(--border)}
+
+    /* ── INQUIRY LIST ── */
+    .inquiry-list{display:flex;flex-direction:column;gap:14px}
+    .inquiry-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:box-shadow .2s,border-color .2s;cursor:pointer}
+    .inquiry-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);border-color:#b8b8c0}
+    .inquiry-card.is-new{border-left:4px solid var(--new)}
+    .inquiry-card.is-new .inq-header{background:#f0fdf4}
+    .inq-header{padding:18px 22px;display:flex;align-items:center;gap:14px;justify-content:space-between}
+    .inq-header-left{display:flex;align-items:center;gap:12px;min-width:0}
+    .inq-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+    .inq-info{min-width:0}
+    .inq-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .inq-name{font-size:15px;font-weight:700;color:var(--dark)}
+    .badge-new{background:var(--new-bg);border:1px solid var(--new-border);color:var(--new);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.05em}
+    .badge-pkg{background:#f0effe;color:var(--accent);font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px}
+    .inq-contact{font-size:13px;color:var(--sub);margin-top:2px}
+    .inq-header-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+    .inq-time{font-size:12px;color:var(--sub)}
+    .inq-platform{font-size:12px;font-weight:600;color:var(--mid);background:var(--bg);padding:3px 10px;border-radius:100px}
+    .inq-body{padding:0 22px 20px;display:none;border-top:1px solid var(--border);margin-top:0}
+    .inq-body.open{display:block}
+    .inq-message{font-size:14px;color:var(--mid);line-height:1.8;padding-top:16px;padding-bottom:16px}
+    .inq-actions{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+    .inq-action-btn{font-size:13px;font-weight:600;padding:8px 18px;border-radius:100px;border:1px solid var(--border);cursor:pointer;background:var(--bg);color:var(--sub);transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .inq-action-btn:hover{background:var(--border)}
+    .inq-action-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .inq-action-btn.primary:hover{opacity:.85}
+    .inq-action-btn.done{background:var(--new-bg);color:var(--new);border-color:var(--new-border)}
+
+    .empty-state{text-align:center;padding:80px 20px;color:var(--sub)}
+    .empty-icon{font-size:48px;margin-bottom:16px}
+    .empty-title{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:8px}
+    .empty-sub{font-size:14px;line-height:1.7}
+
+    /* ── SETUP GUIDE ── */
+    .setup-guide{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:28px}
+    .setup-title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .setup-sub{font-size:14px;color:var(--sub);margin-bottom:16px;line-height:1.7}
+    .setup-steps{display:flex;flex-direction:column;gap:10px}
+    .setup-step{display:flex;gap:12px;font-size:14px;color:var(--mid);align-items:flex-start;line-height:1.65}
+    .setup-step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+    .setup-code{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:monospace;font-size:13px;color:var(--accent);margin-top:8px;display:block}
+    .setup-dismiss{font-size:13px;color:var(--sub);cursor:pointer;text-decoration:underline;margin-top:14px;display:inline-block}
+    .setup-dismiss:hover{color:var(--dark)}
+
+    @media(max-width:640px){
+      .admin-main{padding:24px 16px}
+      .admin-nav{padding:12px 16px}
+      .inq-header{flex-direction:column;align-items:flex-start;gap:10px}
+      .inq-header-right{align-items:flex-start}
+      .admin-top{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">brandis<span>.</span></div>
+    <div class="login-sub">관리자 페이지</div>
+    <input class="login-input" type="password" id="pwInput" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-hint">기본 비밀번호: brandis2025<br>변경하려면 admin.html의 ADMIN_PW 값을 수정하세요</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminScreen">
+  <nav class="admin-nav">
+    <a class="admin-logo" href="index.html">brandis<span>.</span></a>
+    <div class="admin-nav-right">
+      <span class="admin-badge" id="newCountBadge" style="display:none">NEW 0</span>
+      <button class="admin-refresh" onclick="loadInquiries()" title="새로고침">↺ 새로고침</button>
+      <button class="admin-logout" onclick="logout()">로그아웃</button>
+    </div>
+  </nav>
+
+  <div class="admin-main">
+
+    <!-- 설정 가이드 (최초 1회 표시) -->
+    <div class="setup-guide" id="setupGuide">
+      <div class="setup-title">⚙️ 이메일 알림 설정 안내</div>
+      <div class="setup-sub">아래 단계를 완료하면 새 문의가 들어올 때마다 이메일로 알림을 받을 수 있습니다. 지금은 이 기기에서 접수된 문의만 표시됩니다.</div>
+      <div class="setup-steps">
+        <div class="setup-step"><div class="setup-step-num">1</div><div><b>EmailJS 가입</b> — emailjs.com에서 무료 계정 생성 후 Gmail 서비스를 연결하세요.</div></div>
+        <div class="setup-step"><div class="setup-step-num">2</div><div><b>이메일 템플릿 생성</b> — "New Inquiry from {{from_name}}" 제목으로 템플릿을 만드세요.</div></div>
+        <div class="setup-step"><div class="setup-step-num">3</div><div><b>index.html 수정</b> — 아래 3개 값을 본인 계정 정보로 교체하세요.
+          <code class="setup-code">EMAILJS_PUBLIC_KEY = 'your_key'
+EMAILJS_SERVICE_ID = 'service_xxx'
+EMAILJS_TEMPLATE_ID = 'template_xxx'</code>
+        </div></div>
+        <div class="setup-step"><div class="setup-step-num">4</div><div><b>(선택) Google Sheets 연동</b> — apps-script.js 파일을 참고해 Google Sheets에 모든 문의를 자동 저장하고 전 기기에서 확인할 수 있습니다.</div></div>
+      </div>
+      <span class="setup-dismiss" onclick="dismissGuide()">이 안내 숨기기</span>
+    </div>
+
+    <div class="admin-top">
+      <div class="admin-title">📬 문의 관리</div>
+      <div class="admin-stats">
+        <div class="stat-pill" id="statTotal">전체 0건</div>
+        <div class="stat-pill new-pill" id="statNew">NEW 0건</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+      <button class="filter-btn" onclick="setFilter('new',this)">미확인</button>
+      <button class="filter-btn" onclick="setFilter('read',this)">확인 완료</button>
+    </div>
+
+    <div class="inquiry-list" id="inquiryList"></div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PW = 'brandis2025'; // ← 비밀번호 변경 시 이 값을 수정하세요
+const STORAGE_KEY = 'brandis_inquiries';
+const READ_KEY = 'brandis_read_ids';
+let currentFilter = 'all';
+
+/* ── LOGIN ── */
+function doLogin(){
+  const pw = document.getElementById('pwInput').value;
+  if(pw === ADMIN_PW){
+    sessionStorage.setItem('brandis_auth','1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminScreen').style.display='block';
+    init();
+  } else {
+    const err = document.getElementById('loginErr');
+    err.textContent = '비밀번호가 올바르지 않습니다.';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+    setTimeout(()=>err.textContent='', 2500);
+  }
+}
+function logout(){
+  sessionStorage.removeItem('brandis_auth');
+  location.reload();
+}
+
+/* ── AUTO LOGIN CHECK ── */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem('brandis_auth')==='1'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminScreen').style.display='block';
+    init();
+  }
+  // 설정 가이드 표시 여부
+  if(localStorage.getItem('brandis_guide_dismissed')==='1'){
+    document.getElementById('setupGuide').style.display='none';
+  }
+});
+
+/* ── INIT ── */
+function init(){
+  loadInquiries();
+  // 30초마다 자동 새로고침
+  setInterval(loadInquiries, 30000);
+}
+
+/* ── GUIDE ── */
+function dismissGuide(){
+  localStorage.setItem('brandis_guide_dismissed','1');
+  document.getElementById('setupGuide').style.display='none';
+}
+
+/* ── LOAD INQUIRIES ── */
+function loadInquiries(){
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+  const readIds = JSON.parse(localStorage.getItem(READ_KEY)||'[]');
+
+  // 읽음 상태 적용
+  all.forEach(i=>{ i.read = readIds.includes(i.id); });
+
+  const newCount = all.filter(i=>!i.read).length;
+  document.getElementById('statTotal').textContent = `전체 ${all.length}건`;
+  document.getElementById('statNew').textContent = `NEW ${newCount}건`;
+
+  const badge = document.getElementById('newCountBadge');
+  if(newCount > 0){
+    badge.style.display='inline';
+    badge.textContent = `NEW ${newCount}`;
+  } else {
+    badge.style.display='none';
+  }
+
+  renderList(all);
+}
+
+/* ── RENDER ── */
+function renderList(all){
+  let items = [...all];
+  if(currentFilter==='new') items = items.filter(i=>!i.read);
+  if(currentFilter==='read') items = items.filter(i=>i.read);
+
+  const list = document.getElementById('inquiryList');
+
+  if(items.length===0){
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">${currentFilter==='new'?'✅':'📭'}</div>
+      <div class="empty-title">${currentFilter==='new'?'미확인 문의가 없습니다':'문의가 없습니다'}</div>
+      <div class="empty-sub">${currentFilter==='new'?'모든 문의를 확인했습니다!':'아직 접수된 문의가 없습니다.<br>홈페이지의 상담 신청 폼을 테스트해 보세요.'}</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(item=>{
+    const isNew = !item.read;
+    const date = new Date(item.timestamp);
+    const timeStr = formatTime(date);
+    const initial = item.name ? item.name[0] : '?';
+    return `
+    <div class="inquiry-card ${isNew?'is-new':''}" id="card-${item.id}">
+      <div class="inq-header" onclick="toggleCard('${item.id}')">
+        <div class="inq-header-left">
+          <div class="inq-avatar">${initial}</div>
+          <div class="inq-info">
+            <div class="inq-name-row">
+              <span class="inq-name">${escHtml(item.name)}</span>
+              ${isNew ? '<span class="badge-new">NEW</span>' : ''}
+              ${item.package && item.package!=='미정' ? `<span class="badge-pkg">${escHtml(item.package)}</span>` : ''}
+            </div>
+            <div class="inq-contact">${escHtml(item.contact)}</div>
+          </div>
+        </div>
+        <div class="inq-header-right">
+          <span class="inq-time">${timeStr}</span>
+          <span class="inq-platform">${escHtml(item.platform||'—')}</span>
+        </div>
+      </div>
+      <div class="inq-body" id="body-${item.id}">
+        <div class="inq-message">${escHtml(item.message||'내용 없음')}</div>
+        <div class="inq-actions">
+          <a class="inq-action-btn primary" href="tel:${escHtml(item.contact)}" onclick="markRead('${item.id}')">📞 연락하기</a>
+          <a class="inq-action-btn" href="mailto:${escHtml(item.contact)}?subject=brandis 견적 안내" onclick="markRead('${item.id}')">✉️ 이메일</a>
+          ${isNew ? `<button class="inq-action-btn done" onclick="markRead('${item.id}');event.stopPropagation()">✓ 확인 완료</button>` : '<span class="inq-action-btn done" style="cursor:default">✓ 확인됨</span>'}
+          <button class="inq-action-btn" onclick="deleteInquiry('${item.id}');event.stopPropagation()" style="margin-left:auto;color:#ef4444">🗑 삭제</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── TOGGLE CARD ── */
+function toggleCard(id){
+  const body = document.getElementById(`body-${id}`);
+  body.classList.toggle('open');
+  // 열면 자동 읽음 처리
+  if(body.classList.contains('open')) markRead(id);
+}
+
+/* ── MARK READ ── */
+function markRead(id){
+  const readIds = JSON.parse(localStorage.getItem(READ_KEY)||'[]');
+  if(!readIds.includes(id)){
+    readIds.push(id);
+    localStorage.setItem(READ_KEY, JSON.stringify(readIds));
+  }
+  loadInquiries();
+}
+
+/* ── DELETE ── */
+function deleteInquiry(id){
+  if(!confirm('이 문의를 삭제하시겠습니까?')) return;
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(all.filter(i=>i.id!==id)));
+  const readIds = JSON.parse(localStorage.getItem(READ_KEY)||'[]');
+  localStorage.setItem(READ_KEY, JSON.stringify(readIds.filter(r=>r!==id)));
+  loadInquiries();
+}
+
+/* ── FILTER ── */
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadInquiries();
+}
+
+/* ── HELPERS ── */
+function formatTime(date){
+  const now = new Date();
+  const diff = now - date;
+  const min = Math.floor(diff/60000);
+  const hr = Math.floor(diff/3600000);
+  const day = Math.floor(diff/86400000);
+  if(min < 1) return '방금 전';
+  if(min < 60) return `${min}분 전`;
+  if(hr < 24) return `${hr}시간 전`;
+  if(day < 7) return `${day}일 전`;
+  return date.toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function escHtml(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
