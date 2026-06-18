@@ -33,7 +33,7 @@
     "name": "brandis",
     "description": "상세페이지 기획·디자인 스튜디오. 스마트스토어·쿠팡·자사몰 상세페이지를 기획·카피·디자인까지 통합 설계.",
     "url": "https://brandis.co.kr",
-    "email": "hello@brandis.co.kr",
+    "email": "brandis.hello@gmail.com",
     "priceRange": "₩₩",
     "serviceType": ["상세페이지 기획", "상세페이지 제작", "상세페이지 카피", "썸네일 제작"],
     "areaServed": "KR",
@@ -372,6 +372,18 @@
     .port-note{text-align:center;margin-top:40px;font-size:14px;color:var(--muted)}
     .port-note a{color:#fcd535;text-decoration:none}
 
+    /* ── 후기 위치 설계 원칙 ── */
+    .port-principle{margin-top:64px;padding-top:56px;border-top:1px solid rgba(255,255,255,.1)}
+    .pp-label{font-size:12px;font-weight:800;color:#fcd535;letter-spacing:0;margin-bottom:12px;text-align:center}
+    .pp-title{font-size:clamp(22px,3vw,30px);font-weight:900;color:#f5f5f7;line-height:1.3;letter-spacing:-.01em;text-align:center;margin-bottom:14px;word-break:keep-all}
+    .pp-sub{font-size:15px;font-weight:300;color:rgba(245,245,247,.5);line-height:1.7;text-align:center;max-width:640px;margin:0 auto 44px;word-break:keep-all}
+    .pp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .pp-card{background:rgba(255,253,248,.05);border:1px solid rgba(255,253,248,.12);border-radius:12px;padding:28px 24px}
+    .pp-cat{font-size:12px;font-weight:800;color:#fcd535;margin-bottom:14px}
+    .pp-pos{font-size:17px;font-weight:800;color:#f5f5f7;line-height:1.4;margin-bottom:10px;word-break:keep-all}
+    .pp-why{font-size:14px;font-weight:300;color:rgba(245,245,247,.55);line-height:1.7;word-break:keep-all}
+    @media(max-width:760px){.pp-grid{grid-template-columns:1fr}}
+
     /* ── PORTFOLIO MODAL ── */
     .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
     .modal-backdrop.open{opacity:1;pointer-events:all}
@@ -678,6 +690,53 @@
         <p class="port-meta">Brand C · 스마트스토어</p>
       </div>
     </div>
+    <div class="port-item anim" onclick="openModal(3)">
+      <div class="port-thumb"><img src="brandis/img/thumb-men.jpg" alt="남성 올인원 모이스처라이저 상세페이지 제작 시안 — 뷰티·남성 그루밍 스마트스토어" loading="lazy"></div>
+      <div class="port-info">
+        <p class="port-tag">뷰티 · 남성 그루밍</p>
+        <p class="port-name">남성 올인원 모이스처라이저 상세페이지</p>
+        <p class="port-meta">Brand D · 스마트스토어</p>
+      </div>
+    </div>
+    <div class="port-item anim" onclick="openModal(4)">
+      <div class="port-thumb"><img src="brandis/img/thumb-chicken.jpg" alt="고단백 닭가슴살 간편식 상세페이지 제작 시안 — 식품·간편식 스마트스토어" loading="lazy"></div>
+      <div class="port-info">
+        <p class="port-tag">식품 · 간편식</p>
+        <p class="port-name">고단백 닭가슴살 간편식 상세페이지</p>
+        <p class="port-meta">Brand E · 스마트스토어</p>
+      </div>
+    </div>
+    <div class="port-item anim" onclick="openModal(5)">
+      <div class="port-thumb"><img src="brandis/img/thumb-pan.jpg" alt="논스틱 프라이팬 세트 상세페이지 제작 시안 — 리빙·주방용품 스마트스토어" loading="lazy"></div>
+      <div class="port-info">
+        <p class="port-tag">리빙 · 주방용품</p>
+        <p class="port-name">논스틱 프라이팬 세트 상세페이지</p>
+        <p class="port-meta">Brand F · 스마트스토어</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="port-principle anim">
+    <p class="pp-label">왜 샘플마다 후기 위치가 다를까요</p>
+    <h3 class="pp-title">후기를 '어디에 두느냐'까지, 상품마다 다르게 설계합니다</h3>
+    <p class="pp-sub">같은 뷰티, 같은 식품이라도 상품마다 후기 위치가 다릅니다. 공식대로 찍어낸 게 아니라, 그 상품을 살 때 손님이 가장 망설이는 지점을 먼저 풀도록 순서를 짠 결과예요.</p>
+    <div class="pp-grid">
+      <div class="pp-card">
+        <p class="pp-cat">효과가 의심될 때</p>
+        <p class="pp-pos">후기는 뒤쪽에</p>
+        <p class="pp-why">성분·근거로 신뢰부터 쌓고, 후기는 마지막에 쐐기를 박습니다. (안티에이징처럼 회의가 큰 상품)</p>
+      </div>
+      <div class="pp-card">
+        <p class="pp-cat">맛·품질이 걱정될 때</p>
+        <p class="pp-pos">후기를 중간에 한 번 더</p>
+        <p class="pp-why">'별로면 어쩌지'가 가장 큰 장벽이면, 후기를 중간에 미리 보여줘 의심을 끊습니다.</p>
+      </div>
+      <div class="pp-card">
+        <p class="pp-cat">또 실패할까 망설일 때</p>
+        <p class="pp-pos">후기를 맨 위로</p>
+        <p class="pp-why">여러 번 실패해 본 상품이면, 먼저 산 사람들의 후기를 가장 먼저 보여줍니다.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -844,7 +903,7 @@
     <a href="#quick-audit" class="btn-fill" style="font-size:18px;padding:14px 34px">무료로 진단 받기 →</a>
     <div class="contact-methods" style="display:flex;gap:36px;justify-content:center;flex-wrap:wrap;margin-top:44px">
       <div><p class="cm-label" style="color:#fcd535">KAKAO</p><p class="cm-value" style="color:#f5f5f7">brandis_design</p></div>
-      <div><p class="cm-label" style="color:#fcd535">EMAIL</p><p class="cm-value" style="color:#f5f5f7">hello@brandis.co.kr</p></div>
+      <div><p class="cm-label" style="color:#fcd535">EMAIL</p><p class="cm-value" style="color:#f5f5f7">brandis.hello@gmail.com</p></div>
       <div><p class="cm-label" style="color:#fcd535">RESPONSE</p><p class="cm-value" style="color:#f5f5f7">24시간 내 응답</p></div>
     </div>
     <button type="button" onclick="openPriceModal()" style="margin-top:40px;background:none;border:1px solid rgba(255,255,255,.25);color:rgba(245,245,247,.7);font-size:14px;font-weight:700;padding:12px 24px;border-radius:9999px;cursor:pointer;font-family:inherit;transition:border-color .2s">패키지 가격 보기</button>
@@ -864,7 +923,7 @@
           <p class="price-amount">20만<span>원</span></p>
           <p class="price-tagline">기본 상세페이지 (전환 기획+디자인)</p>
           <ul class="price-feats">
-            <li>세로 ~8,000px</li>
+            <li>핵심 8단계 구성 · ~8,000px</li>
             <li>전환 흐름 기획 + 커스텀 디자인</li>
             <li>Figma 원본 제공</li>
             <li>수정 2회 · 납기 4일</li>
@@ -876,7 +935,7 @@
           <p class="price-amount">35만<span>원</span></p>
           <p class="price-tagline">기획 강화형</p>
           <ul class="price-feats">
-            <li>세로 ~12,000px</li>
+            <li>풀 13단계 구성 · ~13,000px</li>
             <li>경쟁사 분석 + 카테고리 심리 설계</li>
             <li>전체 카피 작성</li>
             <li>Figma 원본 제공</li>
@@ -888,7 +947,7 @@
           <p class="price-amount">55만<span>원</span></p>
           <p class="price-tagline">풀 브랜드 설계</p>
           <ul class="price-feats">
-            <li>무제한 분량</li>
+            <li>풀 13단계 + 확장 · 무제한 분량</li>
             <li>BX 전략 + 브랜드 포지셔닝</li>
             <li>썸네일 + SNS 키트 포함</li>
             <li>수정 무제한 · 납기 8일</li>
@@ -917,7 +976,10 @@
 const portfolios = [
   {category:'뷰티 · 스킨케어',title:'PDRN 안티에이징 앰플 상세페이지',platform:'스마트스토어',pkg:'Brand A 샘플',colorClass:'p1',image:'brandis/img/full-beauty.jpg',notionUrl:'https://www.notion.so/365eae843468812ebc5eeaf0d63bc4be',desc:'30대 후반 안티에이징 회의론자에게 "시술 없이 30대를 버틴다"는 약속을 첫 화면부터 전달하는 상세페이지 설계.',scope:['회의론 공감형 후킹 카피','1·14·28일 변화 컷','임상 직후 미디엄 CTA','시술 1회 ≒ 8개월 앰플 가격 앵커링','30일 환불 보장 + 비건 인증'],result:'성분 자랑이 아니라 결과 약속으로 진입하는 13단계 구조'},
   {category:'식품 · 발효 음료',title:'저당 발효 콤부차 상세페이지',platform:'스마트스토어',pkg:'Brand B 샘플',colorClass:'p2',image:'brandis/img/full-food.jpg',notionUrl:'https://www.notion.so/36ceae84346881aa810feb0c6cce58e7',desc:'"건강 효능 자랑 말고, 단맛은 끊고 진짜 맛은 남기는 콤부차"로 맛 카테고리에 진입시키는 상세페이지 설계.',scope:['맛 중심 후킹 카피 3안','SEC 03 후기 미리보기 끌어올림','한국형 8종 페어링 인포그래픽','카페 5,500원 vs 콤부차 4,083원 앵커링','시도세트 6병 27,000원 미디엄 CTA'],result:'후기를 2회 노출하는 식품 특화 14단계 구조'},
-  {category:'리빙 · 수면용품',title:'체형별 메모리폼 베개 상세페이지',platform:'스마트스토어',pkg:'Brand C 샘플',colorClass:'p3',image:'brandis/img/full-living.jpg',notionUrl:'https://www.notion.so/36eeae84346881f194e7c86dc9b77b18',desc:'"베개 다섯 번째 바꾸는 분들이 여기서 멈췄어요" — 충동구매 카테고리에 맞춰 후기를 SEC 02 최상단으로 끌어올린 상세페이지 설계.',scope:['결과 약속형 후킹 + 인스타 화제성 배지','SEC 02 후기 최상단 끌어올림','체형 S/M/L 매칭 인포그래픽','1년 vs 1주 베개 내구성 앵커링','7일 환불 보장 + KC·OEKO-TEX 인증'],result:'충동구매 카테고리 특화 14단계 구조'}
+  {category:'리빙 · 수면용품',title:'체형별 메모리폼 베개 상세페이지',platform:'스마트스토어',pkg:'Brand C 샘플',colorClass:'p3',image:'brandis/img/full-living.jpg',notionUrl:'https://www.notion.so/36eeae84346881f194e7c86dc9b77b18',desc:'"베개 다섯 번째 바꾸는 분들이 여기서 멈췄어요" — 충동구매 카테고리에 맞춰 후기를 SEC 02 최상단으로 끌어올린 상세페이지 설계.',scope:['결과 약속형 후킹 + 인스타 화제성 배지','SEC 02 후기 최상단 끌어올림','체형 S/M/L 매칭 인포그래픽','1년 vs 1주 베개 내구성 앵커링','7일 환불 보장 + KC·OEKO-TEX 인증'],result:'충동구매 카테고리 특화 14단계 구조'},
+  {category:'뷰티 · 남성 그루밍',title:'남성 올인원 모이스처라이저 상세페이지',platform:'스마트스토어',pkg:'Brand D 샘플',colorClass:'p1',image:'brandis/img/full-men.jpg',notionUrl:'https://app.notion.com/p/380eae84346881249db9d81b5f6f3bf7',desc:'성분 자랑 대신 "아침 10초, 하나로 끝"이라는 간편함으로 스킨케어가 귀찮은 2030 남성을 공략하는 상세페이지 설계.',scope:['아침 10초 간편함 후킹 카피','3단계 → 1단계 전후 비교','10초 루틴 미디엄 CTA','3개 따로 6만원대 vs 올인원 가격 앵커링','7일 100% 환불 보장'],result:'남성·간편 소구에 맞춘 하이브리드 후기 배치 13단계 구조'},
+  {category:'식품 · 간편식',title:'고단백 닭가슴살 간편식 상세페이지',platform:'스마트스토어',pkg:'Brand E 샘플',colorClass:'p2',image:'brandis/img/full-chicken.jpg',notionUrl:'https://app.notion.com/p/380eae84346881d8bc2fcc4d5189a962',desc:'단백질 수치 자랑 대신 "퍽퍽해서 끊던 걸 매일 먹게" — 맛과 간편함으로 지속·습관을 파는 상세페이지 설계.',scope:['매일 먹게 되는 단백질 후킹','저온 숙성 육즙 메커니즘','전자레인지 1분 사용법','편의점 닭가슴살 대비 가격 앵커링','첫 구매 100% 환불 보장'],result:'지속·습관 소구에 맞춰 후기를 1회로 압축한 13단계 구조'},
+  {category:'리빙 · 주방용품',title:'논스틱 프라이팬 세트 상세페이지',platform:'스마트스토어',pkg:'Brand F 샘플',colorClass:'p3',image:'brandis/img/full-pan.jpg',notionUrl:'https://app.notion.com/p/380eae843468816db2a0f0446192ccc1',desc:'코팅 자랑 대신 "계란이 스르륵 미끄러지는 그 장면"을 커버에 먼저 보여주는 실연(demo) 중심 상세페이지 설계.',scope:['계란 미끄러지는 실연 컷을 커버에','6중 코팅 단면 메커니즘','음식별 데모 그리드(계란·생선·전)','반년마다 사던 팬 vs 1세트 가격 앵커링','1년 코팅 보증'],result:'실연이 가장 강한 후킹인 상품 — 데모를 맨 앞에 둔 13단계 구조'}
 ];
 
 function openModal(idx){
