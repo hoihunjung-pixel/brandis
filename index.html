@@ -4,6 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>상세페이지 제작 전문 brandis — 스마트스토어·쿠팡·자사몰</title>
+  <link rel="icon" type="image/png" href="brandis/img/favicon_brandis.png"/>
+  <link rel="apple-touch-icon" href="brandis/img/favicon_brandis.png"/>
   <meta name="description" content="상세페이지 기획·디자인 스튜디오 brandis. 스마트스토어·쿠팡·자사몰 상세페이지를 기획, 카피, 디자인까지 통합 설계합니다.">
   <meta name="keywords" content="상세페이지 제작, 스마트스토어 상세페이지, 쿠팡 상세페이지, 자사몰 상세페이지, 상세페이지 기획, 상세페이지 디자인, 상세페이지 카피">
   <meta name="author" content="brandis">
@@ -1140,7 +1142,7 @@ function onAuditFileChange(e){
   label.textContent=`${file.name} · ${kb>=1024?(kb/1024).toFixed(1)+'MB':kb+'KB'}`;
 }
 
-function submitAuditForm(e){
+async function submitAuditForm(e){
   e.preventDefault();
   const form=e.target;
   const fd=new FormData(form);
@@ -1169,12 +1171,36 @@ function submitAuditForm(e){
     package:fd.get('productUrl')||'(URL 미입력)',
     message:'[상품 URL] '+(fd.get('productUrl')||'(미입력)')+'\n[고민] '+(fd.get('message')||'(없음)')+'\n[접수번호] '+id
   };
-  fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(gasPayload)}).catch(()=>{});
-  document.getElementById('auditFormArea').style.display='none';
-  const success=document.getElementById('auditSuccess');
-  success.style.display='block';
-  document.getElementById('auditSuccessId').textContent='접수번호 '+id;
-  success.scrollIntoView({behavior:'smooth',block:'center'});
+  // 전송 — 실패 시 자동 재시도(최대 3회). no-cors라 응답 내용은 못 읽지만,
+  // 네트워크 도달 실패(가장 흔한 펑크)는 reject로 잡혀서 다시 보낸다.
+  let sent=false;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(gasPayload)});
+      sent=true;break;
+    }catch(err){
+      if(attempt<2)await new Promise(r=>setTimeout(r,1500)); // 1.5초 텀 두고 재시도
+    }
+  }
+  if(sent){
+    document.getElementById('auditFormArea').style.display='none';
+    const success=document.getElementById('auditSuccess');
+    success.style.display='block';
+    document.getElementById('auditSuccessId').textContent='접수번호 '+id;
+    success.scrollIntoView({behavior:'smooth',block:'center'});
+  }else{
+    // 3회 모두 실패 — 손님이 모르고 떠나지 않게 이메일로 직접 안내
+    if(btn){btn.disabled=false;btn.textContent='다시 신청하기';}
+    let errEl=document.getElementById('auditSendError');
+    if(!errEl){
+      errEl=document.createElement('p');
+      errEl.id='auditSendError';
+      errEl.style.cssText='margin-top:14px;padding:14px 16px;border-radius:10px;background:#2a1416;color:#ffb4b4;font-size:14px;line-height:1.7;text-align:center;';
+      (btn||form).insertAdjacentElement('afterend',errEl);
+    }
+    errEl.innerHTML='지금 전송이 원활하지 않네요. 번거로우시겠지만 <b style="color:#fff;font-size:15px">brandis.hello@gmail.com</b> 으로<br>상품 URL과 함께 보내주시면 바로 진단해 드릴게요. 🙏';
+    errEl.scrollIntoView({behavior:'smooth',block:'center'});
+  }
 }
 
 /* ============================================================
